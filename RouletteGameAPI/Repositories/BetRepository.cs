@@ -4,70 +4,128 @@ using RouletteGameAPI.Models;
 using static RouletteGameAPI.Models.BetEnums;
 
 namespace RouletteGameAPI.Repositories
-{    
+{
     public class BetRepository : IBetRepository
     {
-       //Task<PlaceBetResponse> PlaceYourBet(List<PlaceBetRequests> placeBetRequests)
-       // public PlaceBetResponse PlaceYourBet(List<PlaceBetRequests> placeBetRequests)
-        public PlaceBetResponse PlaceYourBet(PlaceBetRequests placeBetRequests)
-
+        public async Task<IEnumerable<PlaceBetResponse>> PlaceYourBet(List<PlaceBetRequests> placeBetRequests)
         {
-            var placebetresponse = new PlaceBetResponse();
+            List<PlaceBetResponse> placebetresponse = new List<PlaceBetResponse>();
             var Winningnumber = SpinTheWheel();
-            string WinningColour = FindWinningColour(Winningnumber);          
-            // foreach (var placebetRequest in placeBetRequests)
-            // {
-            //switch (placebetRequest.BetType)
-            switch (placeBetRequests.BetType)
+            string WinningColour = FindWinningColour(Winningnumber);
+            string WinningOddOrEven = EvenOddNumber(Winningnumber);
+            string WinningHighOrLow = HighOrLowNumber(Winningnumber);
+          foreach (var placebetRequest in placeBetRequests)
+           {
+            switch (placebetRequest.BetType)
             {
-                    case BetType.StraightUp:
-                        if  (placeBetRequests.BettingNumbers == Winningnumber)
-                            {
-                               placebetresponse.BetType = "StraightUp";
-                               placebetresponse.Message = "Congratulations, you have won";
-                               placebetresponse.Win = true;
-                               placebetresponse.WinningNumber = Winningnumber;
-                               placebetresponse.PayoutAmount = placeBetRequests.BetAmount * 0.17;
-
-                            }
-                            else
-                            {
-                                placebetresponse.BetType = "StraightUp";
-                                placebetresponse.Message = "Sorry, you lost your bet";
-                                placebetresponse.Win = false;
-                                placebetresponse.WinningNumber = Winningnumber;
-                                placebetresponse.PayoutAmount = 0;
-                            }
-                        break;
-                    case BetType.SplitBet:
-                        break;
-                    case BetType.EvenOrOdd:
-                        break;
-                    case BetType.Colour:
-                        if (placeBetRequests.BettingColour == WinningColour)
+                case BetType.StraightUp:
+                    if (placebetRequest.BettingNumbers == Winningnumber)
+                    {
+                        placebetresponse.Add(new PlaceBetResponse  
                         {
-                        placebetresponse.BetType = "Colour";
-                        placebetresponse.Message = "Congratulations, you have won";
-                        placebetresponse.Win = true;
-                        placebetresponse.WinningNumber = Winningnumber;
-                        placebetresponse.PayoutAmount = placeBetRequests.BetAmount * 0.17;
+                            BetType = "StraightUp",
+                            Message = "Congratulations, you have won",
+                            Win = true,
+                            WinningNumber = Winningnumber,
+                            PayoutAmount = placebetRequest.BetAmount * 35
+                        });
                     }
+                    else
+                    {
+                            placebetresponse.Add(new PlaceBetResponse
+                            {
+                                BetType = "StraightUp",
+                                Message = "Sorry, you lost your bet",
+                                Win = false,
+                                WinningNumber = Winningnumber,
+                                PayoutAmount = 0
+                            });
+                     }
+                    break;
+                case BetType.SplitBet:
+                    break;
+                case BetType.EvenOrOdd:
+                    if (placebetRequest.EvenOdd == WinningOddOrEven)
+                        {                     
+                            placebetresponse.Add(new PlaceBetResponse
+                            {
+                                BetType = "Even or Odd",
+                                Message = "Congratulations, you have won",
+                                Win = true,
+                                WinningNumber = Winningnumber,
+                                PayoutAmount = placebetRequest.BetAmount * 17
+                            });
+
+                        }
                         else
                         {
-                        placebetresponse.BetType = "Colour";
-                        placebetresponse.Message = "Sorry, you lost your bet";
-                        placebetresponse.Win = false;
-                        placebetresponse.WinningNumber = Winningnumber;
-                        placebetresponse.PayoutAmount = 0;
-                    }
-                        break;
-                    case BetType.HighOrLow:
-                        break;
-                    //  }              
-            }
-         //   ("insert into roulettebet (BetType, BettingNumbers, BettingColour, EvenOrOdd, BetAmount, BetPayout) values 
+                        placebetresponse.Add(new PlaceBetResponse
+                            {
+                                BetType = "Even or Odd",
+                                Message = "Sorry, you lost your bet",
+                                Win = false,
+                                WinningNumber = Winningnumber,
+                                PayoutAmount = 0
+                            });
+                        }
+                    break;
+                case BetType.Colour:
+                    if (placebetRequest.BettingColour == WinningColour)
+                        {
+                        placebetresponse.Add(new PlaceBetResponse
+                            {
+                                BetType = "Colour",
+                                Message = "Congratulations, you have won",
+                                Win = true,
+                                WinningNumber = Winningnumber,
+                                PayoutAmount = placebetRequest.BetAmount * 2
+                            });
 
-            return placebetresponse;
+                        }
+
+                    else
+                    {
+                            placebetresponse.Add(new PlaceBetResponse
+                            {
+                                BetType = "Colour",
+                                Message = "Sorry, you lost your bet",
+                                Win = false,
+                                WinningNumber = Winningnumber,
+                                PayoutAmount = 0
+                            });
+                        }
+                    break;
+                case BetType.HighOrLow:
+                    if (placebetRequest.HighLow == WinningHighOrLow)
+                    {
+                            placebetresponse.Add(new PlaceBetResponse
+                            {
+                                BetType = "High or Low",
+                                Message = "Congratulations, you have won",
+                                Win = true,
+                                WinningNumber = Winningnumber,
+                                PayoutAmount = placebetRequest.BetAmount * 3
+                            });
+                        }   
+                    else
+                    {
+                            placebetresponse.Add(new PlaceBetResponse
+                            {
+                                BetType = "Colour",
+                                Message = "Sorry, you lost your bet",
+                                Win = false,
+                                WinningNumber = Winningnumber,
+                                PayoutAmount = 0
+                            });
+
+                    }
+                    break;
+                 }              
+            }
+            //   ("insert into roulettebet (BetType, BettingNumbers, BettingColour, EvenOrOdd, BetAmount, BetPayout,sessionid,playerid)
+            //      values (placebetRequest.BetType, placebetRequest.BettingNumbers,placebetRequest.BettingColour,placebetRequest.EvenOrOdd)",placeBetRequests);
+
+            return placebetresponse.ToList();
         }
 
         public static int SpinTheWheel()
@@ -97,5 +155,38 @@ namespace RouletteGameAPI.Repositories
             return WinningColor;
         }
 
+        private string EvenOddNumber(int wnumber)
+        {
+            int remainder;
+            string OddOrEven;
+            remainder = wnumber % 2;
+            if (remainder == 0)
+            {
+                OddOrEven = "Even";
+            }
+            else
+            {
+                OddOrEven = "Odd";
+            }
+            return OddOrEven;
+        }
+
+        private string HighOrLowNumber(int wnumber)
+        {
+            string HighorLow;
+            if (wnumber > 18)
+            {
+                HighorLow = "High";
+            }
+            else
+            {
+                HighorLow = "Low";
+            }
+            return HighorLow;
+        }
+
+
+
     }
 }
+

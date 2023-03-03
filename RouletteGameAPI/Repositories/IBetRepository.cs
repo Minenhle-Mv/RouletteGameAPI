@@ -4,8 +4,7 @@ namespace RouletteGameAPI.Repositories
 {
     public interface IBetRepository
     {
-        //   Task<PlaceBetResponse> PlaceYourBet(List<PlaceBetRequests> placeBetRequests);
-        PlaceBetResponse PlaceYourBet(PlaceBetRequests placeBetRequests);
-
+        public Task<IEnumerable<PlaceBetResponse>> PlaceYourBet(List<PlaceBetRequests> placeBetRequests);
+            
     }
 }

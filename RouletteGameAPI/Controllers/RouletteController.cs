@@ -1,8 +1,7 @@
-﻿using Dapper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.AspNetCore.Mvc;
 using RouletteGameAPI.Models;
 using RouletteGameAPI.Repositories;
+using System.Collections.Generic;
 using static RouletteGameAPI.Models.BetEnums;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -24,15 +23,8 @@ namespace RouletteGameAPI.Controllers
             _previouspinrepository = previouspinrepository;
         }
 
-        //public RouletteController (IPreviousSpinRepository previouspinrepository, IBetRepository betrepository)
-        //{
-        //    _previouspinrepository = previouspinrepository;
-        //    _betrepository = betrepository;
-        //}
-
-
         [HttpGet]
-        [Route("Show Previous Spins")]
+        [Route("ShowPreviousSpins")]
         public async Task<ActionResult<IEnumerable<PreviousSpinResponse>>> ShowPreviousSpins()
         {
             try
@@ -49,12 +41,18 @@ namespace RouletteGameAPI.Controllers
 
         [HttpPost]
         [Route("PlaceBetAndSpin")]
-        //public async Task<ActionResult<PlaceBetResponse>> PlaceYourBet(List<PlaceBetRequests> placeBetRequests)
-        public ActionResult PlaceYourBet(PlaceBetRequests placeBetRequests)
+         public async Task<ActionResult<IEnumerable<PlaceBetResponse>>> PlaceYourBet(List<PlaceBetRequests> placeBetRequests)
         {
+            try
+            {
+                var placebetresponse = await _betrepository.PlaceYourBet(placeBetRequests);
+                return placebetresponse.ToList();
+            }
 
-            var placebetresponse =  _betrepository.PlaceYourBet(placeBetRequests);
-            return Ok(placebetresponse);
+            catch (Exception ex)
+            {
+                return BadRequest("Bad Request");
+            }
         }
 
 

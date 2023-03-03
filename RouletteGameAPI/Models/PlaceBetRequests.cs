@@ -10,7 +10,8 @@ namespace RouletteGameAPI.Models
         public double BetAmount { get; set; }
         public int BettingNumbers { get; set; }
         public string BettingColour { get; set; }
-        public string EvenOrOdd { get; set; }
+        public string EvenOdd { get; set; }
+        public string HighLow { get; set; }
         //public string playerID { get; set; }
 
     }
